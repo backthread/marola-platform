@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2021", "DOM"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@marola/bus": ["packages/bus/src/index.ts"],
+      "@marola/db": ["packages/db/src/index.ts"],
+      "@marola/db/*": ["packages/db/src/*"],
+      "@marola/auth": ["services/auth/src/index.ts"],
+      "@marola/orders": ["services/orders/src/index.ts"],
+      "@marola/inventory": ["services/inventory/src/index.ts"],
+      "@marola/customers": ["services/customers/src/index.ts"],
+      "@marola/payments": ["services/payments/src/index.ts"],
+      "@marola/backoffice-be": ["services/backoffice-be/src/index.ts"],
+      "@marola/webhooks": ["services/webhooks/src/index.ts"],
+      "@marola/api-gateway": ["services/api-gateway/src/index.ts"],
+      "@marola/stripe": ["integrations/stripe/src/client.ts"],
+      "@marola/hubspot": ["integrations/hubspot/src/client.ts"],
+      "@marola/merit": ["integrations/merit/src/client.ts"],
+      "@marola/warehouse": ["integrations/warehouse/src/client.ts"],
+      "@marola/posthog": ["integrations/posthog/src/client.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
