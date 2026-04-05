@@ -1,0 +1,16 @@
+{
+  "name": "marola-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Marola Baltic retail platform — services, gateways, integrations, shared packages",
+  "workspaces": [
+    "services/*",
+    "integrations/*",
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}
