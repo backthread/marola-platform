@@ -1,0 +1,11 @@
+# Supabase project config for the Marola platform.
+#
+# Marola runs its own identity (`@marola/auth`, RS256 JWTs) and its own Kafka
+# bus, so the Supabase Auth / Realtime / Storage sub-services are intentionally
+# NOT enabled here — Postgres is the only Supabase surface we use. Every
+# service reaches it through `@marola/db`.
+project_id = "marola-platform"
+
+[db]
+port = 54322
+major_version = 15
