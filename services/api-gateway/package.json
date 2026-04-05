@@ -1,0 +1,13 @@
+{
+  "name": "@marola/api-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@marola/auth": "0.1.0",
+    "@marola/orders": "0.1.0",
+    "@marola/inventory": "0.1.0",
+    "@marola/payments": "0.1.0",
+    "@marola/posthog": "0.1.0"
+  }
+}
