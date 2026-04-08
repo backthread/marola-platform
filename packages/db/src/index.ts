@@ -1,6 +1,9 @@
 // @marola/db — per-service Supabase data-access modules.
 //
-// Each service imports the slice it owns. At this stage only the orders
-// datastore exists; more are added as services are split out.
+// One typed slice per datastore. Services import the slice they own
+// (e.g. `import { ordersDb } from "@marola/db"`).
 export { db } from "./client";
 export * as ordersDb from "./orders";
+export * as authDb from "./auth";
+export * as inventoryDb from "./inventory";
+export * as customersDb from "./customers";
