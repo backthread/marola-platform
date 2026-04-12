@@ -1,8 +1,9 @@
 // inventory — Stock sync warehouse ↔ channels.
 //
-// Owns the `inventory` Supabase datastore (stock levels per SKU + warehouse).
-// At this stage it only maintains the mirror table; the WMS feed and the async
-// broadcast are added in later milestones.
+// Maintains the `inventory` Supabase datastore and, since the Kafka migration,
+// broadcasts `inventory.changed` on the bus so channels can hide/reprice SKUs
+// without inventory calling them directly.
+import { publish } from "@marola/bus";
 import { inventoryDb } from "@marola/db";
 
 export const SERVICE_NAME = "inventory";
@@ -13,6 +14,11 @@ export async function setOnHand(sku: string, onHand: number): Promise<void> {
     warehouse: "easyship-tll",
     on_hand: onHand,
     reserved: 0,
+  });
+  await publish({
+    topic: "inventory.changed",
+    key: sku,
+    payload: { sku, onHand },
   });
 }
 
