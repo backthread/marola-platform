@@ -1,10 +1,11 @@
 // api-gateway — Auth + rate-limit + routing.
 //
-// Verifies the JWT via the auth service, then dispatches into orders +
-// inventory. Payments + analytics get wired in as those pieces land.
+// Verifies the JWT via auth, then dispatches into orders, inventory and (since
+// the Stripe launch) payments. Server-side analytics land in a later milestone.
 import { verifyToken } from "@marola/auth";
 import { ingest, IncomingOrder } from "@marola/orders";
 import { setOnHand } from "@marola/inventory";
+import { authorize } from "@marola/payments";
 
 export const SERVICE_NAME = "api-gateway";
 
@@ -25,6 +26,17 @@ export async function handle(req: GatewayRequest): Promise<unknown> {
       const b = req.body as { sku: string; onHand: number };
       await setOnHand(b.sku, b.onHand);
       return { status: 202 };
+    }
+    case "/payments/authorize": {
+      const b = req.body as {
+        orderId: string;
+        amount: number;
+        currency: string;
+        merchant: string;
+      };
+      return {
+        clientSecret: await authorize(b.orderId, b.amount, b.currency, b.merchant),
+      };
     }
     default:
       return { status: 404 };
