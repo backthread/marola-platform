@@ -1,0 +1,11 @@
+{
+  "name": "@marola/payments",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@marola/bus": "0.1.0",
+    "@marola/db": "0.1.0",
+    "@marola/stripe": "0.1.0"
+  }
+}
