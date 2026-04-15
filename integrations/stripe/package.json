@@ -1,0 +1,9 @@
+{
+  "name": "@marola/stripe",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/client.ts",
+  "dependencies": {
+    "stripe": "^16.2.0"
+  }
+}
