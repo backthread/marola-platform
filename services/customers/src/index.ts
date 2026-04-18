@@ -1,10 +1,11 @@
 // customers — Master customer + dedup.
 //
-// Owns the canonical customer identity in the `customers` Supabase datastore.
-// Since the Kafka migration, a merge publishes `customers.merged` on the bus so
-// orders/payments can re-point at the surviving id asynchronously.
+// Owns the canonical customer identity in the `customers` Supabase datastore,
+// publishes `customers.merged` on Kafka, and (since the HubSpot integration)
+// mirrors every contact into the CRM.
 import { publish } from "@marola/bus";
 import { customersDb } from "@marola/db";
+import { upsertContact } from "@marola/hubspot";
 
 export const SERVICE_NAME = "customers";
 
@@ -23,6 +24,7 @@ export async function upsert(c: InboundCustomer): Promise<string> {
     country: c.country,
     merged_into: null,
   });
+  await upsertContact({ email: c.email, country: c.country });
   return id;
 }
 
