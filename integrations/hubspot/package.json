@@ -1,0 +1,9 @@
+{
+  "name": "@marola/hubspot",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/client.ts",
+  "dependencies": {
+    "@hubspot/api-client": "^12.0.1"
+  }
+}
