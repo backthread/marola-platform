@@ -1,0 +1,9 @@
+{
+  "name": "@marola/webhooks",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@marola/orders": "0.1.0"
+  }
+}
