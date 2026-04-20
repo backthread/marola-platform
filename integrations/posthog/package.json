@@ -1,0 +1,9 @@
+{
+  "name": "@marola/posthog",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/client.ts",
+  "dependencies": {
+    "posthog-node": "^4.0.1"
+  }
+}

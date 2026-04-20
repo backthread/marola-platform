@@ -1,0 +1,10 @@
+{
+  "name": "@marola/backoffice-fe",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/App.tsx",
+  "dependencies": {
+    "@marola/backoffice-be": "0.1.0",
+    "react": "^18.3.1"
+  }
+}
