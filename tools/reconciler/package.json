@@ -1,0 +1,13 @@
+{
+  "name": "@marola/reconciler",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "bin": {
+    "marola-reconcile": "src/index.ts"
+  },
+  "dependencies": {
+    "@marola/payments": "0.1.0",
+    "@marola/db": "0.1.0"
+  }
+}
