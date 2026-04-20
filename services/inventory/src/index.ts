@@ -1,35 +1,40 @@
 // inventory — Stock sync warehouse ↔ channels.
 //
-// Maintains the `inventory` Supabase datastore, broadcasts `inventory.changed`
-// on Kafka, and (since the HubSpot integration) pushes a CRM touchpoint when a
-// SKU goes low so the sales team can chase wholesale buyers.
+// Reads live on-hand from the Easyship WMS, mirrors it into the `inventory`
+// Supabase datastore, pushes low-stock signals into HubSpot for the sales team
+// and broadcasts `inventory.changed` on Kafka so channels can reprice/hide SKUs.
 import { publish } from "@marola/bus";
 import { inventoryDb } from "@marola/db";
+import { fetchStock, createFulfilment } from "@marola/warehouse";
 import { upsertContact } from "@marola/hubspot";
 
 export const SERVICE_NAME = "inventory";
 
-export async function setOnHand(sku: string, onHand: number): Promise<void> {
-  await inventoryDb.upsertStock({
-    sku,
-    warehouse: "easyship-tll",
-    on_hand: onHand,
-    reserved: 0,
-  });
-  await publish({
-    topic: "inventory.changed",
-    key: sku,
-    payload: { sku, onHand },
-  });
-  if (onHand < 5) {
-    await upsertContact({ email: `restock+${sku}@marola.example` });
+export async function sync(skus: string[]): Promise<void> {
+  const wms = await fetchStock(skus);
+  for (const item of wms) {
+    await inventoryDb.upsertStock({
+      sku: item.sku,
+      warehouse: "easyship-tll",
+      on_hand: item.available,
+      reserved: 0,
+    });
+    await publish({
+      topic: "inventory.changed",
+      key: item.sku,
+      payload: { sku: item.sku, onHand: item.available },
+    });
   }
 }
 
 export async function reserveForOrder(
+  orderId: string,
   lines: { sku: string; qty: number }[]
 ): Promise<void> {
   for (const line of lines) {
     await inventoryDb.adjustStock(line.sku, -line.qty);
   }
+  await createFulfilment(orderId, lines);
+  // Notify CRM of a fulfilment touchpoint for the buyer.
+  await upsertContact({ email: `order+${orderId}@marola.example` });
 }

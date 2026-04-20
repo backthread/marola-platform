@@ -1,0 +1,13 @@
+{
+  "name": "@marola/dedup-sweeper",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "bin": {
+    "marola-dedup": "src/index.ts"
+  },
+  "dependencies": {
+    "@marola/customers": "0.1.0",
+    "@marola/db": "0.1.0"
+  }
+}
