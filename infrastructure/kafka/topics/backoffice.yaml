@@ -1,0 +1,3 @@
+name: backoffice.events
+partitions: 3
+replication: 3
