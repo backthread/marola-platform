@@ -1,0 +1,11 @@
+{
+  "name": "@marola/backoffice-be",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@marola/auth": "0.1.0",
+    "@marola/bus": "0.1.0",
+    "@marola/db": "0.1.0"
+  }
+}
