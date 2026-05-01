@@ -1,7 +1,7 @@
 # marola-platform
 
-E-commerce + retail platform powering Marola's online stores (EE & LV) and the
-wholesale channel.
+E-commerce + retail platform powering Marola's online stores (EE & LV),
+the wholesale channel, and the retail POS fleet.
 
 ## Architecture
 
@@ -35,3 +35,4 @@ See the live "how it works" diagram with per-merge decision history:
 - woo-1 — WooCommerce B2C (EE)
 - woo-2 — WooCommerce B2C (LV)
 - magento — wholesale
+- pos-fleet — retail POS terminals
