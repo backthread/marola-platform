@@ -3,12 +3,12 @@
 // Each external channel POSTs order webhooks to /hooks/<channel>. Signature
 // verification + payload shape differ per platform, so we keep a registry that
 // maps the channel id to its verifier and normalizer.
-export type ChannelId = "woo-1" | "woo-2" | "magento";
+export type ChannelId = "woo-1" | "woo-2" | "magento" | "pos-fleet";
 
 export interface ChannelConfig {
   id: ChannelId;
-  platform: "woocommerce" | "magento";
-  market: "EE" | "LV" | "wholesale";
+  platform: "woocommerce" | "magento" | "pos";
+  market: "EE" | "LV" | "wholesale" | "retail";
   signatureHeader: string;
 }
 
@@ -30,5 +30,11 @@ export const CHANNELS: Record<ChannelId, ChannelConfig> = {
     platform: "magento",
     market: "wholesale",
     signatureHeader: "x-magento-hmac",
+  },
+  "pos-fleet": {
+    id: "pos-fleet",
+    platform: "pos",
+    market: "retail",
+    signatureHeader: "x-pos-terminal-sig",
   },
 };
