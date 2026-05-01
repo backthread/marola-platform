@@ -1,15 +1,16 @@
-// auth — issues + verifies JWTs.
+// auth — issues + verifies JWTs (RS256-only) and rotates refresh tokens.
 //
-// Reads the `auth` Supabase datastore (users). Other services never touch the
-// user table directly — they call verifyToken() here. Refresh-token rotation is
-// added in a later milestone.
+// Reads the `auth` Supabase datastore (users + refresh_tokens). Other services
+// never hit the user table directly — they call verifyToken() here.
 import { authDb } from "@marola/db";
 import { sign, verify, Claims } from "./jwt";
+import { issue, rotate } from "./refresh";
 
 export const SERVICE_NAME = "auth";
 
 export interface LoginResult {
   accessToken: string;
+  refreshToken: string;
   role: string;
 }
 
@@ -26,7 +27,18 @@ export async function login(
     role: user.role,
     exp: Math.floor(Date.now() / 1000) + 900,
   };
-  return { accessToken: sign(claims), role: user.role };
+  return {
+    accessToken: sign(claims),
+    refreshToken: await issue(user.id),
+    role: user.role,
+  };
+}
+
+export async function refresh(
+  userId: string,
+  presented: string
+): Promise<string> {
+  return rotate(userId, presented);
 }
 
 /** Used by api-gateway + backoffice-be to authorize requests. */
