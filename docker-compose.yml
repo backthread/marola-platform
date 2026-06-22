@@ -1,0 +1,91 @@
+# Marola platform — local + self-hosted container topology.
+#
+# Each compute service builds from its own package dir, so the build context
+# doubles as the source-of-truth for "which code runs in which container."
+# Postgres is managed (Supabase — see supabase/config.toml) and Kafka is the
+# managed Confluent cluster (see infrastructure/kafka/), so neither runs as a
+# compose service here; services reach them over the network via env config.
+#
+# depends_on mirrors the real inter-service call graph (the gateway fronts the
+# domain services; webhooks feeds orders; the nightly jobs read their domains).
+
+services:
+  # --- public ingress -------------------------------------------------------
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_JWKS_URL: http://auth:7002/.well-known/jwks.json
+      POSTHOG_HOST: https://eu.posthog.com
+    depends_on:
+      - auth
+      - orders
+      - inventory
+      - payments
+
+  # --- domain services ------------------------------------------------------
+  auth:
+    build: ./services/auth
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      KAFKA_BROKERS: ${KAFKA_BROKERS}
+
+  orders:
+    build: ./services/orders
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      KAFKA_BROKERS: ${KAFKA_BROKERS}
+      HUBSPOT_TOKEN: ${HUBSPOT_TOKEN}
+
+  payments:
+    build: ./services/payments
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      KAFKA_BROKERS: ${KAFKA_BROKERS}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+
+  customers:
+    build: ./services/customers
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+
+  inventory:
+    build: ./services/inventory
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      KAFKA_BROKERS: ${KAFKA_BROKERS}
+
+  backoffice-be:
+    build: ./services/backoffice-be
+    ports:
+      - "7010:7010"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+    depends_on:
+      - auth
+
+  webhooks:
+    build: ./services/webhooks
+    ports:
+      - "7020:7020"
+    depends_on:
+      - orders
+
+  # --- scheduled batch jobs (run-to-completion, not long-running) -----------
+  reconciler:
+    build: ./tools/reconciler
+    restart: "no"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+    depends_on:
+      - payments
+
+  dedup-sweeper:
+    build: ./tools/dedup-sweeper
+    restart: "no"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+    depends_on:
+      - customers
